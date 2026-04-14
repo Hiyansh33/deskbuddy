@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Desk Buddy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: rgba(255,255,255,0.07);
+    --accent: #6c63ff;
+    --accent2: #00d4aa;
+    --accent3: #ff6b6b;
+    --text: #f0f0f8;
+    --muted: #7070a0;
+    --sidebar-w: 240px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    flex-shrink: 0;
+  }
+
+  .logo {
+    padding: 24px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.5px;
+  }
+
+  .logo-text span { color: var(--accent); }
+
+  .nav {
+    padding: 16px 10px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .nav-section {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 10px 10px 6px;
+    margin-top: 8px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    color: var(--muted);
+    border: 1px solid transparent;
+  }
+
+  .nav-item:hover {
+    background: var(--surface2);
+    color: var(--text);
+  }
+
+  .nav-item.active {
+    background: rgba(108,99,255,0.15);
+    color: var(--accent);
+    border-color: rgba(108,99,255,0.25);
+  }
+
+  .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+
+  .sidebar-bottom {
+    padding: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .plan-badge {
+    background: linear-gradient(135deg, rgba(108,99,255,0.2), rgba(0,212,170,0.2));
+    border: 1px solid rgba(108,99,255,0.3);
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 12px;
+  }
+
+  .plan-badge strong {
+    display: block;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  .plan-badge .upgrade-btn {
+    display: inline-block;
+    margin-top: 8px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* ── MAIN ── */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .topbar {
+    height: 60px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 12px;
+    background: var(--surface);
+  }
+
+  .page-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    flex: 1;
+  }
+
+  .topbar-actions { display: flex; gap: 8px; }
+
+  .btn {
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+
+  .btn-primary:hover { background: #5a52e0; color: white; border-color: #5a52e0; }
+
+  /* ── CONTENT AREA ── */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px;
+  }
+
+  .content::-webkit-scrollbar { width: 4px; }
+  .content::-webkit-scrollbar-track { background: transparent; }
+  .content::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 4px; }
+
+  /* ── PAGES ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── DASHBOARD ── */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+  }
+
+  .stat-card .label { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .stat-card .value { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; }
+  .stat-card .sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .quick-tools {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .tool-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+
+  .tool-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    background: var(--surface2);
+  }
+
+  .tool-card .tool-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .tool-card .tool-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .tool-card .tool-desc { font-size: 11px; color: var(--muted); }
+
+  /* ── CHAT ── */
+  .chat-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 0;
+  }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .chat-messages::-webkit-scrollbar { width: 4px; }
+  .chat-messages::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 4px; }
+
+  .message {
+    display: flex;
+    gap: 12px;
+    animation: fadeUp 0.3s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .message.user { flex-direction: row-reverse; }
+
+  .msg-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .msg-avatar.ai { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+  .msg-avatar.user { background: var(--surface2); border: 1px solid var(--border); }
+
+  .msg-bubble {
+    max-width: 70%;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 14px;
+    line-height: 1.6;
+    border: 1px solid var(--border);
+  }
+
+  .message.user .msg-bubble {
+    background: rgba(108,99,255,0.15);
+    border-color: rgba(108,99,255,0.3);
+    border-radius: 14px 4px 14px 14px;
+  }
+
+  .message.ai .msg-bubble {
+    background: var(--surface);
+    border-radius: 4px 14px 14px 14px;
+  }
+
+  .chat-input-area {
+    border-top: 1px solid var(--border);
+    padding: 16px 0 0;
+  }
+
+  .model-selector {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+
+  .model-chip {
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--muted);
+  }
+
+  .model-chip.active {
+    background: rgba(108,99,255,0.2);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .input-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+  }
+
+  .chat-input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    resize: none;
+    outline: none;
+    min-height: 48px;
+    max-height: 120px;
+    transition: border-color 0.2s;
+  }
+
+  .chat-input:focus { border-color: var(--accent); }
+  .chat-input::placeholder { color: var(--muted); }
+
+  .send-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--accent);
+    border: none;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .send-btn:hover { background: #5a52e0; transform: scale(1.05); }
+
+  /* ── IMAGE GEN ── */
+  .imagine-area {
+    max-width: 700px;
+  }
+
+  .imagine-input-wrap {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .imagine-input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .imagine-input:focus { border-color: var(--accent2); }
+  .imagine-input::placeholder { color: var(--muted); }
+
+  .image-result {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    display: none;
+  }
+
+  .image-result img {
+    width: 100%;
+    display: block;
+  }
+
+  .image-result .img-actions {
+    padding: 12px 16px;
+    display: flex;
+    gap: 8px;
+  }
+
+  /* ── NOTES ── */
+  .notes-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 16px;
+    height: calc(100vh - 120px);
+  }
+
+  .notes-sidebar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    overflow-y: auto;
+  }
+
+  .notes-sidebar h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    margin-bottom: 12px;
+    color: var(--muted);
+  }
+
+  .note-item {
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-bottom: 4px;
+    font-size: 13px;
+  }
+
+  .note-item:hover { background: var(--surface2); }
+  .note-item.active { background: rgba(108,99,255,0.15); color: var(--accent); }
+  .note-item .note-date { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  .note-editor {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .note-editor-top {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .note-title-input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    outline: none;
+  }
+
+  .note-title-input::placeholder { color: var(--muted); }
+
+  .note-body {
+    flex: 1;
+    padding: 20px;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.8;
+    resize: none;
+    outline: none;
+  }
+
+  .note-body::placeholder { color: var(--muted); }
+
+  /* ── SUMMARIZER ── */
+  .summarizer-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    height: calc(100vh - 120px);
+  }
+
+  .sum-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sum-box-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .sum-textarea {
+    flex: 1;
+    padding: 16px 18px;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    resize: none;
+    outline: none;
+  }
+
+  .sum-textarea::placeholder { color: var(--muted); }
+
+  /* ── LOADER ── */
+  .loader {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+    padding: 12px 16px;
+  }
+
+  .loader span {
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: bounce 1s infinite;
+  }
+
+  .loader span:nth-child(2) { animation-delay: 0.15s; }
+  .loader span:nth-child(3) { animation-delay: 0.3s; }
+
+  @keyframes bounce {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-6px); }
+  }
+
+  /* ── WELCOME HERO ── */
+  .welcome-hero {
+    margin-bottom: 28px;
+  }
+
+  .welcome-hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .welcome-hero h1 span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .welcome-hero p { color: var(--muted); font-size: 15px; }
+
+  /* scrollbar for content */
+  .content::-webkit-scrollbar { width: 4px; }
+
+  /* responsive touch */
+  @media (max-width: 900px) {
+    .dashboard-grid { grid-template-columns: 1fr 1fr; }
+    .quick-tools { grid-template-columns: repeat(2, 1fr); }
+    .summarizer-layout { grid-template-columns: 1fr; }
+    .notes-layout { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="logo">
+    <div class="logo-icon">🖥</div>
+    <div class="logo-text">Desk<span>Buddy</span></div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-section">Workspace</div>
+    <div class="nav-item active" onclick="showPage('dashboard', this)">
+      <span class="icon">⚡</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="showPage('chat', this)">
+      <span class="icon">💬</span> AI Chat
+    </div>
+    <div class="nav-item" onclick="showPage('imagine', this)">
+      <span class="icon">🎨</span> Imagine
+    </div>
+
+    <div class="nav-section">Tools</div>
+    <div class="nav-item" onclick="showPage('notes', this)">
+      <span class="icon">📓</span> Notes
+    </div>
+    <div class="nav-item" onclick="showPage('summarizer', this)">
+      <span class="icon">✂️</span> Summarizer
+    </div>
+    <div class="nav-item" onclick="showPage('design', this)">
+      <span class="icon">🖼</span> Design (Soon)
+    </div>
+    <div class="nav-item" onclick="showPage('sheets', this)">
+      <span class="icon">📊</span> Sheets (Soon)
+    </div>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <div class="plan-badge">
+      <strong>Free Plan</strong>
+      <span style="color:var(--muted);font-size:11px">Limited requests/day</span>
+      <br>
+      <button class="upgrade-btn">Upgrade to Pro ↗</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="page-title" id="page-title">Dashboard</div>
+    <div class="topbar-actions">
+      <button class="btn">Settings</button>
+      <button class="btn btn-primary">+ New</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="welcome-hero">
+        <h1>Good day. <span>Let's get to work.</span></h1>
+        <p>Everything you need, right here. No tab switching. No slowdowns.</p>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="stat-card">
+          <div class="label">AI Requests Today</div>
+          <div class="value" style="color:var(--accent)">0</div>
+          <div class="sub">of 50 free requests</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Notes Created</div>
+          <div class="value" style="color:var(--accent2)">0</div>
+          <div class="sub">Start writing something</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Images Generated</div>
+          <div class="value" style="color:var(--accent3)">0</div>
+          <div class="sub">Unlimited on free plan</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;">Quick Access</div>
+      <div class="quick-tools">
+        <div class="tool-card" onclick="showPage('chat', document.querySelector('[onclick*=chat]'))">
+          <span class="tool-icon">💬</span>
+          <div class="tool-name">AI Chat</div>
+          <div class="tool-desc">Ask anything, get answers fast</div>
+        </div>
+        <div class="tool-card" onclick="showPage('imagine', document.querySelector('[onclick*=imagine]'))">
+          <span class="tool-icon">🎨</span>
+          <div class="tool-name">Imagine</div>
+          <div class="tool-desc">Generate any image with AI</div>
+        </div>
+        <div class="tool-card" onclick="showPage('notes', document.querySelector('[onclick*=notes]'))">
+          <span class="tool-icon">📓</span>
+          <div class="tool-name">Notes</div>
+          <div class="tool-desc">Write and organize your ideas</div>
+        </div>
+        <div class="tool-card" onclick="showPage('summarizer', document.querySelector('[onclick*=summarizer]'))">
+          <span class="tool-icon">✂️</span>
+          <div class="tool-name">Summarizer</div>
+          <div class="tool-desc">Paste text, get bullet points</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAT -->
+    <div class="page" id="page-chat">
+      <div class="chat-layout" style="height:calc(100vh - 120px)">
+        <div class="model-selector">
+          <div class="model-chip active" onclick="selectModel(this,'llama-3.3-70b-versatile')">Llama 3.3 70B</div>
+          <div class="model-chip" onclick="selectModel(this,'llama-3.1-8b-instant')">Llama 3.1 8B (Fast)</div>
+          <div class="model-chip" onclick="selectModel(this,'meta-llama/llama-4-scout-17b-16e-instruct')">Llama 4 Scout</div>
+          <div class="model-chip" onclick="selectModel(this,'mixtral-8x7b-32768')">Mixtral 8x7B</div>
+        </div>
+
+        <div class="chat-messages" id="chat-messages">
+          <div class="message ai">
+            <div class="msg-avatar ai">🖥</div>
+            <div class="msg-bubble">Hey! I'm Desk Buddy's AI assistant. Ask me anything — homework, code, ideas, explanations. I'm fast and I won't crash your PC. 😄</div>
+          </div>
+        </div>
+
+        <div class="chat-input-area">
+          <div class="input-row">
+            <textarea class="chat-input" id="chat-input" placeholder="Ask anything..." rows="1"
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"
+              oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+            <button class="send-btn" onclick="sendChat()">↑</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- IMAGINE -->
+    <div class="page" id="page-imagine">
+      <div class="imagine-area">
+        <div style="margin-bottom:20px">
+          <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:6px">Imagine anything. ✨</div>
+          <div style="color:var(--muted);font-size:14px">Type a description and watch it come to life.</div>
+        </div>
+
+        <div class="imagine-input-wrap">
+          <input class="imagine-input" id="imagine-input" placeholder="A futuristic city at sunset, cyberpunk style..."
+            onkeydown="if(event.key==='Enter') generateImage()"/>
+          <button class="btn btn-primary" onclick="generateImage()" style="padding:14px 20px;border-radius:12px">Generate</button>
+        </div>
+
+        <div id="imagine-loader" style="display:none;color:var(--muted);font-size:14px;margin-bottom:16px">
+          <div class="loader"><span></span><span></span><span></span></div>
+          Generating your image...
+        </div>
+
+        <div class="image-result" id="image-result">
+          <img id="generated-img" src="" alt="Generated image"/>
+          <div class="img-actions">
+            <a id="download-img" class="btn" download="desk-buddy-image.jpg">⬇ Download</a>
+            <button class="btn" onclick="generateImage()">🔄 Regenerate</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTES -->
+    <div class="page" id="page-notes">
+      <div class="notes-layout">
+        <div class="notes-sidebar">
+          <h3>MY NOTES</h3>
+          <button class="btn btn-primary" style="width:100%;margin-bottom:12px;font-size:12px" onclick="newNote()">+ New Note</button>
+          <div id="notes-list"></div>
+        </div>
+        <div class="note-editor">
+          <div class="note-editor-top">
+            <input class="note-title-input" id="note-title" placeholder="Note title..." oninput="saveCurrentNote()"/>
+            <button class="btn" style="font-size:12px" onclick="deleteNote()">Delete</button>
+            <button class="btn btn-primary" style="font-size:12px" onclick="summarizeNote()">✂️ Summarize</button>
+          </div>
+          <textarea class="note-body" id="note-body" placeholder="Start writing..." oninput="saveCurrentNote()"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUMMARIZER -->
+    <div class="page" id="page-summarizer">
+      <div class="summarizer-layout">
+        <div class="sum-box">
+          <div class="sum-box-header">
+            <span>📋 Paste your text</span>
+            <button class="btn" style="font-size:11px" onclick="document.getElementById('sum-input').value=''">Clear</button>
+          </div>
+          <textarea class="sum-textarea" id="sum-input" placeholder="Paste any text here — articles, notes, essays, anything..."></textarea>
+          <div style="padding:12px 18px;border-top:1px solid var(--border)">
+            <button class="btn btn-primary" style="width:100%" onclick="summarize()">✂️ Summarize it</button>
+          </div>
+        </div>
+        <div class="sum-box">
+          <div class="sum-box-header">
+            <span>⚡ Summary</span>
+            <button class="btn" style="font-size:11px" onclick="copySum()">Copy</button>
+          </div>
+          <div id="sum-output" style="flex:1;padding:16px 18px;font-size:14px;line-height:1.8;color:var(--muted);overflow-y:auto">
+            Your summary will appear here...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESIGN (coming soon) -->
+    <div class="page" id="page-design">
+      <div style="text-align:center;padding:80px 20px">
+        <div style="font-size:48px;margin-bottom:16px">🖼</div>
+        <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:8px">Design Studio</div>
+        <div style="color:var(--muted)">Coming soon. Canvas editor with AI-powered design tools.</div>
+      </div>
+    </div>
+
+    <!-- SHEETS (coming soon) -->
+    <div class="page" id="page-sheets">
+      <div style="text-align:center;padding:80px 20px">
+        <div style="font-size:48px;margin-bottom:16px">📊</div>
+        <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:8px">Sheets & Slides</div>
+        <div style="color:var(--muted)">Coming soon. Spreadsheets and presentations, powered by AI.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+let currentModel = 'llama-3.3-70b-versatile';
+let chatHistory = [];
+let notes = JSON.parse(localStorage.getItem('db_notes') || '[]');
+let currentNoteId = null;
+
+// ── NAVIGATION ──
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+  const titles = { dashboard:'Dashboard', chat:'AI Chat', imagine:'Imagine', notes:'Notes', summarizer:'Summarizer', design:'Design Studio', sheets:'Sheets & Slides' };
+  document.getElementById('page-title').textContent = titles[id] || id;
+  if (id === 'notes') renderNotesList();
+}
+
+function selectModel(el, model) {
+  currentModel = model;
+  document.querySelectorAll('.model-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ── CHAT ──
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  addMessage('user', text);
+  input.value = '';
+  input.style.height = 'auto';
+  chatHistory.push({ role: 'user', content: text });
+
+  const loaderEl = addLoader();
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: chatHistory, model: currentModel })
+    });
+    const data = await res.json();
+    loaderEl.remove();
+    const reply = data.reply || data.error || 'Something went wrong.';
+    addMessage('ai', reply);
+    chatHistory.push({ role: 'assistant', content: reply });
+  } catch {
+    loaderEl.remove();
+    addMessage('ai', 'Connection error. Make sure the server is running!');
+  }
+}
+
+function addMessage(role, text) {
+  const container = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = `message ${role}`;
+  div.innerHTML = `
+    <div class="msg-avatar ${role}">${role === 'ai' ? '🖥' : '👤'}</div>
+    <div class="msg-bubble">${text.replace(/\n/g,'<br>')}</div>
+  `;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+  return div;
+}
+
+function addLoader() {
+  const container = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'message ai';
+  div.innerHTML = `<div class="msg-avatar ai">🖥</div><div class="msg-bubble"><div class="loader"><span></span><span></span><span></span></div></div>`;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+  return div;
+}
+
+// ── IMAGINE ──
+async function generateImage() {
+  const prompt = document.getElementById('imagine-input').value.trim();
+  if (!prompt) return;
+
+  document.getElementById('imagine-loader').style.display = 'flex';
+  document.getElementById('image-result').style.display = 'none';
+
+  try {
+    const res = await fetch('/api/imagine', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+    const data = await res.json();
+    document.getElementById('imagine-loader').style.display = 'none';
+
+    const img = document.getElementById('generated-img');
+    img.src = data.imageUrl;
+    document.getElementById('download-img').href = data.imageUrl;
+    document.getElementById('image-result').style.display = 'block';
+  } catch {
+    document.getElementById('imagine-loader').style.display = 'none';
+    alert('Image generation failed. Check your server!');
+  }
+}
+
+// ── NOTES ──
+function renderNotesList() {
+  const list = document.getElementById('notes-list');
+  list.innerHTML = '';
+  notes.forEach(note => {
+    const div = document.createElement('div');
+    div.className = `note-item ${note.id === currentNoteId ? 'active' : ''}`;
+    div.innerHTML = `<div>${note.title || 'Untitled'}</div><div class="note-date">${new Date(note.updatedAt).toLocaleDateString()}</div>`;
+    div.onclick = () => openNote(note.id);
+    list.appendChild(div);
+  });
+}
+
+function newNote() {
+  const note = { id: Date.now(), title: '', body: '', updatedAt: Date.now() };
+  notes.unshift(note);
+  saveNotes();
+  openNote(note.id);
+  renderNotesList();
+}
+
+function openNote(id) {
+  currentNoteId = id;
+  const note = notes.find(n => n.id === id);
+  if (!note) return;
+  document.getElementById('note-title').value = note.title;
+  document.getElementById('note-body').value = note.body;
+  renderNotesList();
+}
+
+function saveCurrentNote() {
+  if (!currentNoteId) return;
+  const note = notes.find(n => n.id === currentNoteId);
+  if (!note) return;
+  note.title = document.getElementById('note-title').value;
+  note.body = document.getElementById('note-body').value;
+  note.updatedAt = Date.now();
+  saveNotes();
+  renderNotesList();
+}
+
+function deleteNote() {
+  if (!currentNoteId) return;
+  notes = notes.filter(n => n.id !== currentNoteId);
+  currentNoteId = null;
+  document.getElementById('note-title').value = '';
+  document.getElementById('note-body').value = '';
+  saveNotes();
+  renderNotesList();
+}
+
+function saveNotes() {
+  localStorage.setItem('db_notes', JSON.stringify(notes));
+}
+
+async function summarizeNote() {
+  const text = document.getElementById('note-body').value.trim();
+  if (!text) return alert('Write something first!');
+  showPage('summarizer', document.querySelector('[onclick*=summarizer]'));
+  document.getElementById('sum-input').value = text;
+  await summarize();
+}
+
+// ── SUMMARIZER ──
+async function summarize() {
+  const text = document.getElementById('sum-input').value.trim();
+  if (!text) return;
+
+  const output = document.getElementById('sum-output');
+  output.innerHTML = '<div class="loader"><span></span><span></span><span></span></div>';
+
+  try {
+    const res = await fetch('/api/summarize', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+    const data = await res.json();
+    output.style.color = 'var(--text)';
+    output.innerHTML = (data.summary || 'Failed to summarize.').replace(/\n/g, '<br>');
+  } catch {
+    output.innerHTML = 'Connection error. Make sure the server is running!';
+  }
+}
+
+function copySum() {
+  const text = document.getElementById('sum-output').innerText;
+  navigator.clipboard.writeText(text);
+}
+
+// ── INIT ──
+renderNotesList();
+</script>
+</body>
+</html>
